@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head } from "@inertiajs/vue3";
+import { Head, Link } from "@inertiajs/vue3";
 
 defineProps({
     products: {
@@ -11,13 +11,20 @@ defineProps({
 </script>
 
 <template>
-    <Head title="Manage Products" />
+    <Head title="New Product" />
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Manage Products
-            </h2>
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                    Manage Products
+                </h2>
+                <Link
+                    :href="route('products.create')"
+                    class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                    >New Product
+                </Link>
+            </div>
         </template>
 
         <div class="py-12">

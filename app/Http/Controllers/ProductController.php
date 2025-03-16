@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Models\Category;
+use Illuminate\Http\Request;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\CategoryResource;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 
@@ -25,7 +28,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('Products/Create', [
+            'categories' => CategoryResource::collection(Category::orderBy('name')->get()),
+        ]);
     }
 
     /**
@@ -33,7 +38,8 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        //
+        $request->user()->products()->create($request->validated());
+        return redirect()->route('products.index');
     }
 
     /**
