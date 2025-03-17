@@ -4,28 +4,33 @@ import { Head, Link, useForm } from "@inertiajs/vue3";
 
 const props = defineProps({
     product: {
+        type: Object,
+        required: true,
+    },
+    categories: {
         type: Array,
         required: true,
     },
 });
 
 const form = useForm({
-    name: props.product.name,
-    brand: props.product.brand,
-    category_id: "",
-    price: props.product.price,
-    weight: props.product.weight,
-    description: props.product.description,
+    ...props.product,
+    category_id: props.product.category.id,
 });
 
-const store = () => {
-    form.post(
-        route("products.store", {
-            onSuccess: () => {
-                form.reset();
-            },
-        }),
-    );
+// const form = useForm({
+//     name: props.product.name,
+//     brand: props.product.brand,
+//     category_id: "",
+//     price: props.product.price,
+//     weight: props.product.weight,
+//     description: props.product.description,
+// });
+
+const update = () => {
+    form.put(route("products.update", form.id), {
+        onSuccess: () => form.reset(),
+    });
 };
 </script>
 
@@ -52,7 +57,7 @@ const store = () => {
                     <div class="relative w-full max-w-2xl max-h-full">
                         <form
                             class="relative bg-white rounded-lg shadow"
-                            @submit.prevent="store"
+                            @submit.prevent="update"
                         >
                             <div class="p-6 space-y-6">
                                 <div class="grid grid-cols-6 gap-6">
@@ -268,7 +273,7 @@ const store = () => {
                                             type="submit"
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                                         >
-                                            Save
+                                            Update
                                         </button>
                                         <button
                                             type="button"
