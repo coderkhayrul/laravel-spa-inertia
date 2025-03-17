@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, router } from "@inertiajs/vue3";
 
 defineProps({
     products: {
@@ -8,6 +8,14 @@ defineProps({
         required: true,
     },
 });
+
+const deleteRow = (id) => {
+    if (window.confirm("Are you sure?")) {
+        router.delete(route("products.destroy", id), {
+            preserveScroll: true,
+        });
+    }
+};
 </script>
 
 <template>
@@ -99,6 +107,9 @@ defineProps({
                                             >Edit</Link
                                         >
                                         <a
+                                            @click.prevent="
+                                                deleteRow(product.id)
+                                            "
                                             href="#"
                                             class="font-medium text-red-600 hover:underline"
                                             >Delete</a

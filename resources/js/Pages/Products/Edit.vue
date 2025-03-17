@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, Link, useForm } from "@inertiajs/vue3";
+import { Head, Link, useForm, router } from "@inertiajs/vue3";
 import ProductForm from "./ProductForm.vue";
 
 const props = defineProps({
@@ -33,6 +33,13 @@ const update = () => {
         onSuccess: () => form.reset(),
     });
 };
+const deleteRow = (id) => {
+    if (window.confirm("Are you sure?")) {
+        router.delete(route("products.destroy", id), {
+            preserveScroll: true,
+        });
+    }
+};
 </script>
 
 <template>
@@ -61,18 +68,28 @@ const update = () => {
                             :categories="categories"
                             @submit="update"
                         >
-                            <button
-                                type="submit"
-                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                            >
-                                Update
-                            </button>
-                            <Link
-                                :href="route('products.index')"
-                                class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5"
-                            >
-                                Cancel
-                            </Link>
+                            <div class="flex items-center justify-between">
+                                <div class="space-x-2">
+                                    <button
+                                        type="submit"
+                                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                    >
+                                        Update
+                                    </button>
+                                    <Link
+                                        :href="route('products.index')"
+                                        class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5"
+                                    >
+                                        Cancel
+                                    </Link>
+                                    <a
+                                        @click.prevent="deleteRow(product.id)"
+                                        href="#"
+                                        class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                        >Delete</a
+                                    >
+                                </div>
+                            </div>
                         </ProductForm>
                     </div>
                 </div>
