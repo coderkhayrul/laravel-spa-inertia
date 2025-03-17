@@ -2,20 +2,20 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
 
-defineProps({
-    categories: {
+const props = defineProps({
+    product: {
         type: Array,
         required: true,
     },
 });
 
 const form = useForm({
-    name: "",
-    brand: "",
+    name: props.product.name,
+    brand: props.product.brand,
     category_id: "",
-    price: null,
-    weight: null,
-    description: "",
+    price: props.product.price,
+    weight: props.product.weight,
+    description: props.product.description,
 });
 
 const store = () => {
@@ -30,13 +30,13 @@ const store = () => {
 </script>
 
 <template>
-    <Head title="New Product" />
+    <Head title="Edit Product" />
 
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                    New Product
+                    Edit Product
                 </h2>
                 <Link
                     :href="route('products.index')"
