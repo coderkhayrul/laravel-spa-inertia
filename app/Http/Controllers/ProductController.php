@@ -20,13 +20,25 @@ class ProductController extends Controller
 
         $products = auth()->user()
             ->products()
-            ->latest()
             ->with('category')
             ->when(request('search'), function ($query, $search) {
                 $query->where('name', 'like', "%$search%")
                     ->orWhereHas('category', function ($query) use ($search) {
                         $query->where('name', 'like', "%$search%");
                     });
+            })
+            ->when(!request()->query('sort_by'), function ($query) {
+                $query->latest();
+            })
+            ->when(in_array(request()->query('sort_by'), [
+                'name',
+                'price',
+                'weight'
+            ]), function ($query) {
+                $sortBy = request()->query('sort_by');
+                $field = ltrim($sortBy, '-');
+                $direction = substr($sortBy, 0, 1) === '-' ? 'desc' : 'asc';
+                $query->orderBy($field, $direction);
             })
             ->paginate(5)
             ->withQueryString();
