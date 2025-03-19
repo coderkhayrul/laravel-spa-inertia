@@ -194,6 +194,9 @@ const showingNavigationDropdown = ref(false);
 
             <!-- Page Content -->
             <main>
+                <div v-if="$page.props.toast.message" class="bg-green-100 p-4">
+                    {{ $page.props.toast.message }}
+                </div>
                 <slot />
             </main>
         </div>

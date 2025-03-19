@@ -17,7 +17,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = auth()->user()->products()->latest()->get();
+        $products = auth()->user()->products()->latest()->paginate(10);
+        // return ProductResource::collection($products);
+
         return inertia('Products/Index', [
             'products' => ProductResource::collection($products),
         ]);
@@ -39,7 +41,9 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         $request->user()->products()->create($request->all());
-        return redirect()->route('products.index');
+        return redirect()
+            ->route('products.index')
+            ->with('message', 'Product created.');
     }
 
     /**
@@ -69,7 +73,9 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         $product->update($request->validated());
-        return redirect()->route('products.index');
+        return redirect()
+            ->route('products.index')
+            ->with('message', 'Product updated.');
     }
 
     /**
@@ -78,6 +84,8 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $product->delete();
-        return redirect()->route('products.index');
+        return redirect()
+            ->route('products.index')
+            ->with('message', 'Product deleted.');
     }
 }
