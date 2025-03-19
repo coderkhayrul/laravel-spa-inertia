@@ -1,4 +1,5 @@
 <script setup>
+import { router } from "@inertiajs/vue3";
 import { computed } from "vue";
 
 const props = defineProps({
@@ -13,7 +14,8 @@ const props = defineProps({
 });
 
 const sortClass = computed(() => {
-    let sortBy = "price";
+    const urlParams = new URLSearchParams(window.location.search);
+    let sortBy = urlParams.get("sort_by") || "";
     let sortDir = sortBy.charAt(0);
     let sortClass = "";
 
@@ -22,8 +24,23 @@ const sortClass = computed(() => {
     }
     return sortClass;
 });
+
+const navigate = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    let sortBy = urlParams.get("sort_by") || "";
+    let sortDir = sortBy.charAt(0);
+
+    sortBy = !sortBy || sortDir === "-" ? props.name : `-${props.name}`;
+
+    urlParams.set("sort_by", sortBy);
+    const params = Object.fromEntries(urlParams.entries());
+
+    router.get(route(route().current()), params);
+};
 </script>
 
 <template>
-    <a href="#" class="sortable" :class="sortClass">{{ props.label }}</a>
+    <a href="#" @click.prevent="navigate" class="sortable" :class="sortClass">{{
+        props.label
+    }}</a>
 </template>
