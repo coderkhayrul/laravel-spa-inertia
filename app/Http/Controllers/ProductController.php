@@ -40,7 +40,7 @@ class ProductController extends Controller
                 $direction = substr($sortBy, 0, 1) === '-' ? 'desc' : 'asc';
                 $query->orderBy($field, $direction);
             })
-            ->paginate(5)
+            ->paginate(10)
             ->withQueryString();
 
         return inertia('Products/Index', [
@@ -111,5 +111,17 @@ class ProductController extends Controller
         return redirect()
             ->route('products.index')
             ->with('message', 'Product deleted.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function bulkDestroy(string $ids)
+    {
+        $ids = explode(',', $ids);
+        Product::destroy($ids);
+        return redirect()
+            ->route('products.index')
+            ->with('message', 'Selected Product deleted.');
     }
 }

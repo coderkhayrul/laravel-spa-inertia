@@ -1,8 +1,11 @@
 <script setup>
+import { ref } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, router } from "@inertiajs/vue3";
 import Pagination from "@/Components/Pagination.vue";
 import Sortable from "@/Components/Sortable.vue";
+import CheckBox from "@/Components/CheckBox.vue";
+import CheckAll from "@/Components/CheckAll.vue";
 
 const props = defineProps({
     products: {
@@ -25,11 +28,27 @@ const deleteRow = (id) => {
     }
 };
 
+const deleteSelected = () => {
+    if (window.confirm("Are you sure?")) {
+        router.delete(
+            route("products.bulk.destroy", selectedIds.value.join(",")),
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    selectedIds.value = [];
+                },
+            },
+        );
+    }
+};
+
 const handelSearch = (event) => {
     router.get(route("products.index"), {
         search: event.target.value,
     });
 };
+
+const selectedIds = ref([]);
 </script>
 
 <template>
@@ -83,6 +102,20 @@ const handelSearch = (event) => {
                     </div>
                 </div>
 
+                <!-- red -->
+                <button
+                    type="button"
+                    class="px-3 py-2.5 text-sm font-medium text-center text-white rounded-md"
+                    :class="{
+                        ' bg-red-300 cursor-not-allowed':
+                            selectedIds.length === 0,
+                        'bg-red-600 hover:bg-red-700': selectedIds.length > 0,
+                    }"
+                    :disabled="!selectedIds.length"
+                    @click="deleteSelected"
+                >
+                    Delete Selected
+                </button>
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div
                         class="relative overflow-x-auto shadow-md sm:rounded-lg"
@@ -94,6 +127,12 @@ const handelSearch = (event) => {
                                 class="text-xs text-gray-700 uppercase bg-gray-50 border-b"
                             >
                                 <tr>
+                                    <th scope="col" class="px-6 py-3" width="5">
+                                        <CheckAll
+                                            :rows="products.data"
+                                            v-model="selectedIds"
+                                        />
+                                    </th>
                                     <th scope="col" class="px-6 py-3" width="5">
                                         No
                                     </th>
@@ -127,6 +166,15 @@ const handelSearch = (event) => {
                                     :key="product.id"
                                     class="bg-white border-b hover:bg-gray-50"
                                 >
+                                    <td
+                                        scope="row"
+                                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                                    >
+                                        <CheckBox
+                                            :value="product.id"
+                                            v-model:checked="selectedIds"
+                                        />
+                                    </td>
                                     <td
                                         scope="row"
                                         class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
