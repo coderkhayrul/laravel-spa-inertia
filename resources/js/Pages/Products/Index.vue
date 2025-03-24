@@ -1,15 +1,20 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, router } from "@inertiajs/vue3";
 import Pagination from "@/Components/Pagination.vue";
 import Sortable from "@/Components/Sortable.vue";
 import CheckBox from "@/Components/CheckBox.vue";
 import CheckAll from "@/Components/CheckAll.vue";
+import BulkEdit from "./BulkEdit.vue";
 
 const props = defineProps({
     products: {
         type: Object,
+        required: true,
+    },
+    categories: {
+        type: Array,
         required: true,
     },
     query: {
@@ -18,6 +23,12 @@ const props = defineProps({
             search: "",
         }),
     },
+});
+
+const selectedProducts = computed(() => {
+    return props.products.data
+        .filter((product) => selectedIds.value.includes(product.id))
+        .map((product) => ({ id: product.id, name: product.name }));
 });
 
 const deleteRow = (id) => {
@@ -49,6 +60,7 @@ const handelSearch = (event) => {
 };
 
 const selectedIds = ref([]);
+const showModal = ref();
 </script>
 
 <template>
@@ -101,21 +113,39 @@ const selectedIds = ref([]);
                         />
                     </div>
                 </div>
-
                 <!-- red -->
-                <button
-                    type="button"
-                    class="px-3 py-2.5 text-sm font-medium text-center text-white rounded-md"
-                    :class="{
-                        ' bg-red-300 cursor-not-allowed':
-                            selectedIds.length === 0,
-                        'bg-red-600 hover:bg-red-700': selectedIds.length > 0,
-                    }"
-                    :disabled="!selectedIds.length"
-                    @click="deleteSelected"
-                >
-                    Delete Selected
-                </button>
+                <div class="space-x-3 mb-3">
+                    <!-- Delete Button -->
+                    <button
+                        type="button"
+                        class="px-3 py-2.5 text-sm font-medium text-center text-white rounded-md"
+                        :class="{
+                            ' bg-red-300 cursor-not-allowed':
+                                selectedIds.length === 0,
+                            'bg-red-600 hover:bg-red-700':
+                                selectedIds.length > 0,
+                        }"
+                        :disabled="!selectedIds.length"
+                        @click="deleteSelected"
+                    >
+                        Delete Selected
+                    </button>
+                    <!-- Edit Button  -->
+                    <button
+                        type="button"
+                        class="px-3 py-2.5 text-sm font-medium text-center text-white rounded-md"
+                        :class="{
+                            ' bg-cyan-300 cursor-not-allowed':
+                                selectedIds.length === 0,
+                            'bg-cyan-600 hover:cyan-red-700':
+                                selectedIds.length > 0,
+                        }"
+                        :disabled="!selectedIds.length"
+                        @click="showModal = true"
+                    >
+                        Edit Selected
+                    </button>
+                </div>
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div
                         class="relative overflow-x-auto shadow-md sm:rounded-lg"
@@ -238,5 +268,13 @@ const selectedIds = ref([]);
                 </div>
             </div>
         </div>
+
+        <BulkEdit
+            :show="showModal"
+            @click="showModal = true"
+            @updated="selectedIds = []"
+            :products="selectedProducts"
+            :categories="categories"
+        />
     </AuthenticatedLayout>
 </template>

@@ -97,9 +97,10 @@ const emit = defineEmits(["submit"]);
                         id="category_id"
                         class="shadow-sm bg-gray-50 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5"
                         :class="{
-                            'border-gray-300 text-red-900': !form.errors.brand,
+                            'border-gray-300 text-red-900':
+                                !form.errors.category_id,
                             'border-red-500 bg-red-50 text-red-900':
-                                form.errors.brand,
+                                form.errors.category_id,
                         }"
                     >
                         <option value="">Select a category</option>
